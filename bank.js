@@ -1,6 +1,7 @@
 window.getMonetary = function getMonetary(period) {
 
-  return fetch("http://edr.data-gov-ua.org:8080/https://bank.gov.ua/NBUStatService/v1/statdirectory/monetary%3Fdate%3D" + period + "%26json")
+  return fetch("https://edr.data-gov-ua.org/nbustat/monetary/?date=" +
+    period + "&json")
     .then(function(res) { return res.json() })
     .then(function(data) {
 
