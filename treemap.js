@@ -1,84 +1,77 @@
-var root = d3.stratify()
-    .id(function(d) { return d.id; })
-    .parentId(function(d) { return d.parentId; })
-    (window.flat);
-root.sum(function(d) { return d.value; });
-    //.sort(function(a, b) { return b.value - a.value; });
-/*
-var width=100, height=100;
-var treemap = d3.treemap()
-    .size([100, 100])
-    .padding(1)
-    .round(true);
-treemap(root);
+var period = moment('201609','YYYYMM').format('YYYYMM');
+window.getMonetary(period).then(function (flatData) {
 
-var div = d3.select("#d3-treemap").append("div");
-console.log(div)
-  //  .style("position", "relative")
-  //  .style("width", (width + margin.left + margin.right) + "px")
-  //  .style("height", (height + margin.top + margin.bottom) + "px")
-  //  .style("left", margin.left + "px")
-  //  .style("top", margin.top + "px");
-  var node = div.datum(root).data(treemap.nodes)//.enter().append("div");
-  //    .attr("class", "node");
-
-  svg.selectAll("path")
-      .data(partition(root).descendants())
-    .enter().append("path")
-      .attr("d", arc)
-      .style("fill", function(d) { return color((d.children ? d : d.parent).data.name); })
-      .on("click", click)
-    .append("title")
-      .text(function(d) { return d.data.name + "\n" + formatNumber(d.value); });
-
-
-//  node
-//      .data(treemap.value(value).nodes)
-
+  var root = d3.stratify()
+      .id(function(d) { return d.id; })
+      .parentId(function(d) { return d.parentId; })
+      (flatData);
+  root.sum(function(d) { return d.value; });
+      //.sort(function(a, b) { return b.value - a.value; });
+  /*
+  var width=100, height=100;
+  var treemap = d3.treemap()
+      .size([100, 100])
+      .padding(1)
+      .round(true);
+  treemap(root);
+  
+  var div = d3.select("#d3-treemap").append("div");
+  console.log(div)
+    //  .style("position", "relative")
+    //  .style("width", (width + margin.left + margin.right) + "px")
+    //  .style("height", (height + margin.top + margin.bottom) + "px")
+    //  .style("left", margin.left + "px")
+    //  .style("top", margin.top + "px");
+    var node = div.datum(root).data(treemap.nodes)//.enter().append("div");
+    //    .attr("class", "node");
+  
+    svg.selectAll("path")
+        .data(partition(root).descendants())
+      .enter().append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color((d.children ? d : d.parent).data.name); })
+        .on("click", click)
+      .append("title")
+        .text(function(d) { return d.data.name + "\n" + formatNumber(d.value); });
 
 
-console.log(root)
-
+  //  node
+  //      .data(treemap.value(value).nodes)
 
 
 
+  console.log(root)
+  */
 
 
 
+  var svg = d3.select("svg"),
+      diameter = +svg.attr("width"),
+      g = svg.append("g").attr("transform", "translate(2,2)"),
+      format = d3.format("d");
+
+      var pack = d3.pack()
+          .size([diameter - 4, diameter - 4]);
 
 
+    var node = g.selectAll(".node")
+      .data(pack(root).descendants())
+      .enter().append("g")
+        .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    node.append("title")
+        .text(function(d) { return d.data.text + "\n" + format(d.value / 1000) + " млрд грн"; });
+
+    node.append("circle")
+        .attr("r", function(d) { return d.r; });
+
+    node.filter(function(d) { return !d.children; }).append("text")
+        .attr("dy", "0.3em")
+        .text(function(d) { return d.data.text.substring(0, d.r / 3); });
 
 
-*/
-
-
-
-var svg = d3.select("svg"),
-    diameter = +svg.attr("width"),
-    g = svg.append("g").attr("transform", "translate(2,2)"),
-    format = d3.format(",d");
-
-    var pack = d3.pack()
-        .size([diameter - 4, diameter - 4]);
-
-
-  var node = g.selectAll(".node")
-    .data(pack(root).descendants())
-    .enter().append("g")
-      .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-  node.append("title")
-      .text(function(d) { return d.data.text + "\n" + format(d.value / 1000) + " млрд грн"; });
-
-  node.append("circle")
-      .attr("r", function(d) { return d.r; });
-
-  node.filter(function(d) { return !d.children; }).append("text")
-      .attr("dy", "0.3em")
-      .text(function(d) { return d.data.text.substring(0, d.r / 3); });
-
-
+});
 
 /*
 var width = 500,
